@@ -3,17 +3,30 @@
 
 # your code here
 # [Tus imports anteriores permanecen igual]
-import streamlit as st
-from pickle import load
-import pandas as pd
 import joblib
+import os
+import pandas as pd
+import pickle
+from pickle import load
+import streamlit as st
 
-# Carga de modelo y datos
-model = load(open('../models/arima_0_0_1.pkl', 'rb'))
-model_Storage = load(open('../models/Storage_arima_0_0_1.pkl', 'rb'))
+# 1. Configurar la ruta base del proyecto
+# Esto apunta a la carpeta 'src', así que subimos un nivel para llegar a la raíz
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ts_mensual = pd.read_csv('../data/processed/datos_procesados.csv', index_col=0, parse_dates=True)
-ts_mensual_s = pd.read_csv('../data/processed/datos_procesados_Storage.csv', index_col=0, parse_dates=True)
+# 2. Carga de modelos (Usando rutas seguras)
+model_path = os.path.join(BASE_DIR, 'models', 'arima_0_0_1.pkl')
+model_storage_path = os.path.join(BASE_DIR, 'models', 'Storage_arima_0_0_1.pkl')
+
+model = load(open(model_path, 'rb'))
+model_Storage = load(open(model_storage_path, 'rb'))
+
+# 3. Carga de datos
+ts_path = os.path.join(BASE_DIR, 'data', 'processed', 'datos_procesados.csv')
+ts_s_path = os.path.join(BASE_DIR, 'data', 'processed', 'datos_procesados_Storage.csv')
+
+ts_mensual = pd.read_csv(ts_path, index_col=0, parse_dates=True)
+ts_mensual_s = pd.read_csv(ts_s_path, index_col=0, parse_dates=True)
 
 st.title('StockSense')
 st.markdown('Determinar la cantidad de stock en los próximos meses.')
