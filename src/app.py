@@ -18,7 +18,7 @@ ts_mensual_s = pd.read_csv('../data/processed/datos_procesados_Storage.csv', ind
 st.title('StockSense')
 st.markdown('Determinar la cantidad de stock en los próximos meses.')
 
-valor         = st.slider('Cantidad de meses', min_value=1, max_value=12, step=1, value=4) 
+valor = st.slider('Cantidad de meses', min_value=1, max_value=12, step=1, value=4) 
 
 if st.button("Predict"):
     # 1. Predicciones de desviaciones
