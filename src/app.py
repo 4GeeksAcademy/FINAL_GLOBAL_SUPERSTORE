@@ -10,29 +10,37 @@ import joblib
 
 # Carga de modelo y datos
 model = load(open('/workspaces/FINAL_GLOBAL_SUPERSTORE/models/arima_0_0_1.pkl', 'rb'))
+model_Storage = load(open('/workspaces/FINAL_GLOBAL_SUPERSTORE/models/Storage_arima_0_0_1.pkl', 'rb'))
 
 ts_mensual = pd.read_csv('/workspaces/FINAL_GLOBAL_SUPERSTORE/data/processed/datos_procesados.csv', index_col=0, parse_dates=True)
-
+ts_mensual_s = pd.read_csv('/workspaces/FINAL_GLOBAL_SUPERSTORE/data/processed/datos_procesados_Storage.csv', index_col=0, parse_dates=True)
 
 st.title('StockSense')
 st.markdown('Determinar la cantidad de stock en los próximos meses.')
 
-valor = st.slider('Cantidad de meses', min_value=1, max_value=12, step=1, value=4) # <- CAMBIO: min_value=1 para evitar predicción de 0 meses
+valor         = st.slider('Cantidad de meses', min_value=1, max_value=12, step=1, value=4) 
 
 if st.button("Predict"):
-    
+    # 1. Predicciones de desviaciones
     desviaciones = model.predict(valor)
+    desv_storage = model_Storage.predict(valor) # Tu nuevo modelo
+
+    # 2. Obtener el último valor base
     try:
         ultimo_valor_cantidad = ts_mensual['quantity'].iloc[-1]
+        ultimo_storage = ts_mensual_s['quantity'].iloc[-1]
     except KeyError:
-        
-        ultimo_valor_cantidad = ts_mensual.iloc[-1, 0] 
+        ultimo_valor_cantidad = ts_mensual.iloc[-1, 0]
 
-    desviaciones_acumuladas = desviaciones.cumsum()
-    cantidades_reales = round(ultimo_valor_cantidad + desviaciones_acumuladas,0)
+    # 3. Cálculo de cantidades reales (Acumulando desviaciones)
+    cantidades_office = round(ultimo_valor_cantidad + desviaciones.cumsum(), 0)
+    cantidades_storage = round(ultimo_storage + desv_storage.cumsum(), 0)
 
-    df_predict = pd.DataFrame(cantidades_reales)
-    df_predict.columns = ['Stock Mensual office supplies'] 
+    # 4. Creación del DataFrame con ambas columnas
+    df_predict = pd.DataFrame({
+        'Stock Mensual office supplies totales': cantidades_office,
+        'Stock Mensual Storage': cantidades_storage
+    })
 
     # Mostrar resultados en tabla
     st.subheader("Predicción de Inventario")
