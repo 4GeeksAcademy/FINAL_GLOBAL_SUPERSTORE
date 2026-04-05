@@ -9,11 +9,11 @@ import pandas as pd
 import joblib
 
 # Carga de modelo y datos
-model = load(open('/workspaces/FINAL_GLOBAL_SUPERSTORE/models/arima_0_0_1.pkl', 'rb'))
-model_Storage = load(open('/workspaces/FINAL_GLOBAL_SUPERSTORE/models/Storage_arima_0_0_1.pkl', 'rb'))
+model = load(open('../models/arima_0_0_1.pkl', 'rb'))
+model_Storage = load(open('../models/Storage_arima_0_0_1.pkl', 'rb'))
 
-ts_mensual = pd.read_csv('/workspaces/FINAL_GLOBAL_SUPERSTORE/data/processed/datos_procesados.csv', index_col=0, parse_dates=True)
-ts_mensual_s = pd.read_csv('/workspaces/FINAL_GLOBAL_SUPERSTORE/data/processed/datos_procesados_Storage.csv', index_col=0, parse_dates=True)
+ts_mensual = pd.read_csv('../data/processed/datos_procesados.csv', index_col=0, parse_dates=True)
+ts_mensual_s = pd.read_csv('../data/processed/datos_procesados_Storage.csv', index_col=0, parse_dates=True)
 
 st.title('StockSense')
 st.markdown('Determinar la cantidad de stock en los próximos meses.')
